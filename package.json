@@ -1,0 +1,13 @@
+{
+  "name": "qpay-shopify",
+  "version": "1.0.0",
+  "description": "QPay V2 payment app for Shopify",
+  "main": "src/index.js",
+  "scripts": { "start": "node src/index.js", "dev": "node --watch src/index.js" },
+  "dependencies": {
+    "express": "^4.18.0",
+    "ejs": "^3.1.9",
+    "dotenv": "^16.3.0"
+  },
+  "license": "MIT"
+}

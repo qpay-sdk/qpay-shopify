@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QPay Payment</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; text-align: center; padding: 20px; background: #f9f9f9; }
+    .container { max-width: 480px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .qr { margin: 20px 0; }
+    .banks { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
+    .bank-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border: 1px solid #ddd; border-radius: 8px; text-decoration: none; color: #333; font-size: 14px; }
+    .bank-btn:hover { background: #f5f5f5; }
+    .status { margin-top: 16px; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>QPay Төлбөр</h2>
+    <p>Order #<%= orderId %></p>
+    <div class="qr">
+      <% if (invoice.qr_image) { %>
+        <img src="data:image/png;base64,<%= invoice.qr_image %>" width="256" height="256" alt="QR Code">
+      <% } %>
+    </div>
+    <p>Банкны аппликейшнээр төлөх:</p>
+    <div class="banks">
+      <% (invoice.urls || []).forEach(function(link) { %>
+        <a href="<%= link.link %>" class="bank-btn" target="_blank">
+          <% if (link.logo) { %><img src="<%= link.logo %>" width="24" height="24"><% } %>
+          <%= link.name %>
+        </a>
+      <% }); %>
+    </div>
+    <p class="status">Төлбөр баталгаажихыг хүлээж байна...</p>
+  </div>
+  <script>
+    var poll = setInterval(function() {
+      fetch('<%= checkUrl %>').then(r => r.json()).then(function(data) {
+        if (data.paid) {
+          clearInterval(poll);
+          document.querySelector('.status').textContent = 'Төлбөр баталгаажлаа!';
+          setTimeout(function() { window.location.href = '<%= returnUrl %>'; }, 1500);
+        }
+      });
+    }, 3000);
+  </script>
+</body>
+</html>
