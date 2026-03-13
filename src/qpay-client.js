@@ -34,6 +34,7 @@ async function apiRequest(method, endpoint, body) {
 
 module.exports = {
   createInvoice: (data) => apiRequest('POST', '/v2/invoice', data),
+  getPayment: (paymentId) => apiRequest('GET', `/v2/payment/${paymentId}`),
   checkPayment: (invoiceId) => apiRequest('POST', '/v2/payment/check', {
     object_type: 'INVOICE', object_id: invoiceId,
   }),

@@ -3,16 +3,18 @@ const qpay = require('../qpay-client');
 
 const router = Router();
 
-router.post('/qpay', async (req, res) => {
-  const invoiceId = req.body.invoice_id;
-  if (!invoiceId) return res.status(400).json({ error: 'Missing invoice_id' });
+router.get('/qpay', async (req, res) => {
+  const paymentId = req.query.qpay_payment_id;
+  if (!paymentId) return res.status(400).type('text/plain').send('Missing qpay_payment_id');
 
   try {
-    const result = await qpay.checkPayment(invoiceId);
-    const paid = result.rows && result.rows.length > 0;
-    res.json({ status: paid ? 'paid' : 'unpaid' });
+    const payment = await qpay.getPayment(paymentId);
+    if (!payment || !payment.payment_id) {
+      return res.status(400).type('text/plain').send('Payment not found');
+    }
+    res.status(200).type('text/plain').send('SUCCESS');
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).type('text/plain').send('ERROR');
   }
 });
 
